@@ -288,7 +288,7 @@ cr_package_from_header(Header hdr,
             } else {
                 // Regular file
                 packagefile->type = cr_safe_string_chunk_insert(pkg->chunk, "");
-                packagefile->digest = cr_safe_string_chunk_insert(pkg->chunk, rpmtdGetString(filedigests));
+                packagefile->hexdigest = cr_safe_string_chunk_insert(pkg->chunk, rpmtdGetString(filedigests));
             }
 
             g_hash_table_replace(filenames_hashtable,

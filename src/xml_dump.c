@@ -196,7 +196,7 @@ cr_xml_dump_files(xmlNodePtr node, cr_Package *package, int primary)
             cr_xmlNewProp(file_node, BAD_CAST "type", BAD_CAST entry->type);
         } else {
             // Write file hash
-            cr_xmlNewProp(file_node, BAD_CAST "digest", BAD_CAST entry->digest);
+            cr_xmlNewProp(file_node, BAD_CAST "digest", BAD_CAST entry->hexdigest);
         }
     }
 }

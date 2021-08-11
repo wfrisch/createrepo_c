@@ -61,7 +61,7 @@ typedef struct {
     char *type;                 /*!< one of "" (regular file), "dir", "ghost" */
     char *path;                 /*!< path to file */
     char *name;                 /*!< filename */
-    char *digest;               /*!< Hash of file contents (SHA-256) */
+    char *hexdigest;            /*!< Hex digest of contents (e.g. SHA-256) */
 } cr_PackageFile;
 
 /** Changelog entry.
