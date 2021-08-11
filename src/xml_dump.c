@@ -194,6 +194,9 @@ cr_xml_dump_files(xmlNodePtr node, cr_Package *package, int primary)
         // Write type (skip type if type value is empty of "file")
         if (entry->type && entry->type[0] != '\0' && strcmp(entry->type, "file")) {
             cr_xmlNewProp(file_node, BAD_CAST "type", BAD_CAST entry->type);
+        } else {
+            // Write file hash
+            cr_xmlNewProp(file_node, BAD_CAST "digest", BAD_CAST entry->digest);
         }
     }
 }

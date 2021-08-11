@@ -233,6 +233,7 @@ cr_package_from_header(Header hdr,
     rpmtd filenames = rpmtdNew();
     rpmtd fileflags = rpmtdNew();
     rpmtd filemodes = rpmtdNew();
+    rpmtd filedigests = rpmtdNew();
 
     GHashTable *filenames_hashtable = g_hash_table_new(g_str_hash, g_str_equal);
 
@@ -257,18 +258,21 @@ cr_package_from_header(Header hdr,
         headerGet(hdr, RPMTAG_DIRINDEXES, indexes,  flags) &&
         headerGet(hdr, RPMTAG_BASENAMES,  filenames, flags) &&
         headerGet(hdr, RPMTAG_FILEFLAGS,  fileflags, flags) &&
-        headerGet(hdr, RPMTAG_FILEMODES,  filemodes, flags))
+        headerGet(hdr, RPMTAG_FILEMODES,  filemodes, flags) &&
+        headerGet(hdr, RPMTAG_FILEDIGESTS, filedigests, flags))
     {
         rpmtdInit(full_filenames);
         rpmtdInit(indexes);
         rpmtdInit(filenames);
         rpmtdInit(fileflags);
         rpmtdInit(filemodes);
+        rpmtdInit(filedigests);
         while ((rpmtdNext(full_filenames) != -1)   &&
                (rpmtdNext(indexes) != -1)   &&
                (rpmtdNext(filenames) != -1) &&
                (rpmtdNext(fileflags) != -1) &&
-               (rpmtdNext(filemodes) != -1))
+               (rpmtdNext(filemodes) != -1) &&
+               (rpmtdNext(filedigests) != -1))
         {
             cr_PackageFile *packagefile = cr_package_file_new();
             packagefile->name = cr_safe_string_chunk_insert(pkg->chunk,
@@ -284,6 +288,7 @@ cr_package_from_header(Header hdr,
             } else {
                 // Regular file
                 packagefile->type = cr_safe_string_chunk_insert(pkg->chunk, "");
+                packagefile->digest = cr_safe_string_chunk_insert(pkg->chunk, rpmtdGetString(filedigests));
             }
 
             g_hash_table_replace(filenames_hashtable,
