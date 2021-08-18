@@ -65,6 +65,8 @@ struct CmdOptions _cmd_options = {
         .zck_compression            = FALSE,
         .zck_dict_dir               = NULL,
         .recycle_pkglist            = FALSE,
+
+        .verbose_filelists          = FALSE,
     };
 
 
@@ -208,6 +210,10 @@ static GOptionEntry cmd_entries[] =
       "Read the list of packages from old metadata directory and re-use it.  This "
       "option is only useful with --update (complements --pkglist and friends).",
       NULL },
+    { "verbose-filelists", 0, 0, G_OPTION_ARG_NONE, &(_cmd_options.verbose_filelists),
+      "Include metadata in filelists.xml (owner, permissions, digest, ...)",
+      NULL
+    },
     { NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL },
 };
 

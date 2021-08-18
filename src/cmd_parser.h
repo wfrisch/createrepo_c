@@ -138,6 +138,9 @@ struct CmdOptions {
     GSList *modulemd_metadata;  /*!< paths to all modulemd metadata */
 
     gboolean recycle_pkglist;
+
+    gboolean verbose_filelists; /*!< include metadata (owner, digest, ...)
+                                     in filelists */
 };
 
 /**

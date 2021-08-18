@@ -61,7 +61,11 @@ typedef struct {
     char *type;                 /*!< one of "" (regular file), "dir", "ghost" */
     char *path;                 /*!< path to file */
     char *name;                 /*!< filename */
-    char *hexdigest;            /*!< Hex digest of contents (e.g. SHA-256) */
+    unsigned int size;          /*!< file size */
+    unsigned short mode;        /*!< permissions */
+    char *username;             /*!< owner (user name) */
+    char *groupname;            /*!< owner (group name) */
+    char *hexdigest;            /*!< hex digest of contents (e.g. SHA-256) */
 } cr_PackageFile;
 
 /** Changelog entry.

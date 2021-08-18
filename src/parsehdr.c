@@ -233,6 +233,9 @@ cr_package_from_header(Header hdr,
     rpmtd filenames = rpmtdNew();
     rpmtd fileflags = rpmtdNew();
     rpmtd filemodes = rpmtdNew();
+    rpmtd filesizes = rpmtdNew();
+    rpmtd fileusername = rpmtdNew();
+    rpmtd filegroupname = rpmtdNew();
     rpmtd filedigests = rpmtdNew();
 
     GHashTable *filenames_hashtable = g_hash_table_new(g_str_hash, g_str_equal);
@@ -259,6 +262,9 @@ cr_package_from_header(Header hdr,
         headerGet(hdr, RPMTAG_BASENAMES,  filenames, flags) &&
         headerGet(hdr, RPMTAG_FILEFLAGS,  fileflags, flags) &&
         headerGet(hdr, RPMTAG_FILEMODES,  filemodes, flags) &&
+        headerGet(hdr, RPMTAG_FILESIZES, filesizes, flags) &&
+        headerGet(hdr, RPMTAG_FILEUSERNAME, fileusername, flags) &&
+        headerGet(hdr, RPMTAG_FILEGROUPNAME, filegroupname, flags) &&
         headerGet(hdr, RPMTAG_FILEDIGESTS, filedigests, flags))
     {
         rpmtdInit(full_filenames);
@@ -266,12 +272,17 @@ cr_package_from_header(Header hdr,
         rpmtdInit(filenames);
         rpmtdInit(fileflags);
         rpmtdInit(filemodes);
-        rpmtdInit(filedigests);
+        rpmtdInit(filesizes);
+        rpmtdInit(fileusername);
+        rpmtdInit(filegroupname);
         while ((rpmtdNext(full_filenames) != -1)   &&
                (rpmtdNext(indexes) != -1)   &&
                (rpmtdNext(filenames) != -1) &&
                (rpmtdNext(fileflags) != -1) &&
                (rpmtdNext(filemodes) != -1) &&
+               (rpmtdNext(filesizes) != -1) &&
+               (rpmtdNext(fileusername) != -1) &&
+               (rpmtdNext(filegroupname) != -1) &&
                (rpmtdNext(filedigests) != -1))
         {
             cr_PackageFile *packagefile = cr_package_file_new();
@@ -279,15 +290,28 @@ cr_package_from_header(Header hdr,
                                                          rpmtdGetString(filenames));
             packagefile->path = (dir_list) ? dir_list[(int) rpmtdGetNumber(indexes)] : "";
 
+            assert(rpmtdGetNumber(filemodes) <= USHRT_MAX);
+            packagefile->mode = (unsigned short) rpmtdGetNumber(filemodes);
+
+            packagefile->username = cr_safe_string_chunk_insert(pkg->chunk, rpmtdGetString(fileusername));
+            packagefile->groupname = cr_safe_string_chunk_insert(pkg->chunk, rpmtdGetString(fileusername));
+
             if (S_ISDIR(rpmtdGetNumber(filemodes))) {
                 // Directory
                 packagefile->type = cr_safe_string_chunk_insert(pkg->chunk, "dir");
             } else if (rpmtdGetNumber(fileflags) & RPMFILE_GHOST) {
                 // Ghost
                 packagefile->type = cr_safe_string_chunk_insert(pkg->chunk, "ghost");
+            } else if (S_ISLNK(rpmtdGetNumber(filemodes))) {
+                // Symlink
+                packagefile->type = cr_safe_string_chunk_insert(pkg->chunk, "link");
             } else {
                 // Regular file
                 packagefile->type = cr_safe_string_chunk_insert(pkg->chunk, "");
+
+                assert(rpmtdGetNumber(filesizes) <= UINT_MAX);
+                packagefile->size = (unsigned int) rpmtdGetNumber(filesizes);
+
                 packagefile->hexdigest = cr_safe_string_chunk_insert(pkg->chunk, rpmtdGetString(filedigests));
             }
 

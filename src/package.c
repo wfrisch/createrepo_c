@@ -224,6 +224,10 @@ cr_package_copy(cr_Package *orig)
         file->type = cr_safe_string_chunk_insert(pkg->chunk, orig_file->type);
         file->path = cr_safe_string_chunk_insert(pkg->chunk, orig_file->path);
         file->name = cr_safe_string_chunk_insert(pkg->chunk, orig_file->name);
+        file->mode = orig_file->mode;
+        file->size = orig_file->size;
+        file->username = cr_safe_string_chunk_insert(pkg->chunk, orig_file->username);
+        file->groupname = cr_safe_string_chunk_insert(pkg->chunk, orig_file->groupname);
         file->hexdigest = cr_safe_string_chunk_insert(pkg->chunk, orig_file->hexdigest);
         pkg->files = g_slist_prepend(pkg->files, file);
     }

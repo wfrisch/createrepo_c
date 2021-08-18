@@ -47,6 +47,8 @@ cr_xml_dump_filelists_items(xmlNodePtr root, cr_Package *package)
     // Add arch attribute
     cr_xmlNewProp(root, BAD_CAST "arch", BAD_CAST package->arch);
 
+    // Add checksum type attribute
+    cr_xmlNewProp(root, BAD_CAST "checksum_type", BAD_CAST package->checksum_type);
 
     /***********************************
      Element: version

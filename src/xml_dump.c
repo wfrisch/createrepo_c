@@ -28,7 +28,6 @@
 #include "xml_dump.h"
 #include "xml_dump_internal.h"
 
-
 void
 cr_xml_dump_init()
 {
@@ -194,10 +193,21 @@ cr_xml_dump_files(xmlNodePtr node, cr_Package *package, int primary)
         // Write type (skip type if type value is empty of "file")
         if (entry->type && entry->type[0] != '\0' && strcmp(entry->type, "file")) {
             cr_xmlNewProp(file_node, BAD_CAST "type", BAD_CAST entry->type);
+
         } else {
-            // Write file hash
+            char *size_str = g_strdup_printf("%i", entry->size);
+            cr_xmlNewProp(file_node, BAD_CAST "size", BAD_CAST size_str);
+            g_free(size_str);
+
             cr_xmlNewProp(file_node, BAD_CAST "digest", BAD_CAST entry->hexdigest);
         }
+
+        char *mode_str = g_strdup_printf("%o", entry->mode);
+        cr_xmlNewProp(file_node, BAD_CAST "mode", BAD_CAST mode_str);
+        g_free(mode_str);
+
+        cr_xmlNewProp(file_node, BAD_CAST "user", BAD_CAST entry->username);
+        cr_xmlNewProp(file_node, BAD_CAST "group", BAD_CAST entry->groupname);
     }
 }
 
